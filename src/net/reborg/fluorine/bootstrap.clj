@@ -3,9 +3,10 @@
             [clojure.tools.logging :as log]
             [com.stuartsierra.component :as component]))
 
-;; this prevents system var to disappear on reset
+;; this prevents system var to disappear on reset.
 (disable-reload!)
 
+;; the entire system singleton lives here.
 (def system nil)
 
 (def ^:private initializer nil)

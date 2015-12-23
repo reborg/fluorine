@@ -1,0 +1,51 @@
+<configuration scan="false" debug="false">
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} %level %logger{36} - %msg%n</pattern>
+    </encoder>
+
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>logs/application-%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+      <timeBasedFileNamingAndTriggeringPolicy
+          class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <maxFileSize>64 MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
+    </rollingPolicy>
+
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>DEBUG</level>
+    </filter>
+  </appender>
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} %level %logger{36} - %msg%n</pattern>
+    </encoder>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>INFO</level>
+    </filter>
+  </appender>
+
+  <root level="WARN">
+    <!-- <appender-ref ref="FILE" /> -->
+    <appender-ref ref="STDOUT" />
+  </root>
+
+  <logger name="net.reborg" level="DEBUG" />
+  <logger name="org.eclipse" level="WARN" />
+  <logger name="org.hornetq" level="WARN" />
+  <!-- these namespsaces create a ton of log noise -->
+  <logger name="httpclient" level="INFO"/>
+  <logger name="org.apache.commons.httpclient" level="INFO"/>
+  <logger name="org.apache.http" level="INFO"/>
+  <logger name="org.jets3t" level="INFO"/>
+  <logger name="com.amazonaws" level="INFO"/>
+  <logger name="com.amazonaws.request" level="WARN"/>
+  <logger name="sun.rmi" level="INFO"/>
+  <logger name="net.spy.memcached" level="INFO"/>
+  <logger name="com.couchbase.client" level="INFO"/>
+  <logger name="org.apache.zookeeper" level="INFO"/>
+  <logger name="com.ning.http.client.providers.netty" level="INFO"/>
+  <logger name="org.apache.tomcat.jdbc.pool" level="INFO"/>
+
+</configuration>
