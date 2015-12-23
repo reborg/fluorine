@@ -1,5 +1,6 @@
 (ns net.reborg.fluorine-client
   (:require
+    [net.reborg.fluorine.config :refer [fluorine-host fluorine-port]]
     [clojure.tools.logging :as log]
     [aleph.http :as http]
     [manifold.stream :as s]
@@ -7,7 +8,11 @@
     ))
 
 (defn attach [path callback]
-  (let [conn @(http/websocket-client (str "ws://localhost:10101" path))]
+  (let [conn @(http/websocket-client
+                (format "ws://%s:%s%s"
+                        (fluorine-host)
+                        (fluorine-port)
+                        path))]
     (s/consume #(callback (edn/read-string %)) conn)))
 
 (defn- debug []

@@ -25,6 +25,7 @@
     (merge main-cfg user-cfg)))
 
 (defn nrepl-port [] (:nrepl-port (config)))
+(defn fluorine-host [] (:fluorine-host (config)))
 (defn fluorine-port [] (:fluorine-port (config)))
 
 (defn pretty [x]

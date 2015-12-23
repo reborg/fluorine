@@ -1,4 +1,5 @@
 {
+  :fluorine-host localhost
   :fluorine-port 10101
   :nrepl-port 10102
   :user-config "fluorine.config"
