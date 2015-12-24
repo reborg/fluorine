@@ -1,6 +1,7 @@
 (ns net.reborg.fluorine
   (:require
     [net.reborg.fluorine.bootstrap :refer [system]]
+    [net.reborg.fluorine.fs :as fs]
     [clojure.tools.logging :as log]
     [compojure.core :as compojure :refer [GET]]
     [ring.middleware.params :as params]
@@ -22,7 +23,7 @@
 (defn- push-config!
   "Send current config reading down a connected client."
   [conn path]
-  (s/put! conn (serialize {:a "a" :b "b"})))
+  (s/put! conn (serialize (fs/read path))))
 
 (defn connection-handler
   [path req]
@@ -37,7 +38,7 @@
 (def handler
   (params/wrap-params
     (compojure/routes
-      (GET "/*" {{path :*} :params}
+      (GET "*" {{path :*} :params}
            (partial connection-handler path))
       (route/not-found "No such page."))))
 

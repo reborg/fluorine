@@ -27,6 +27,7 @@
 (defn nrepl-port [] (:nrepl-port (config)))
 (defn fluorine-host [] (:fluorine-host (config)))
 (defn fluorine-port [] (:fluorine-port (config)))
+(defn fluorine-root [] (:fluorine-root (config)))
 
 (defn pretty [x]
   (with-out-str (pp/write x)))
