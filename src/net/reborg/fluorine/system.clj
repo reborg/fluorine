@@ -11,7 +11,7 @@
             [com.stuartsierra.component :as component]))
 
 (defn- init-change-stream [] (s/stream))
-(defn- close-change-stream [s] (s/close! s))
+(defn- close-change-stream [s] (when s (s/close! s)))
 
 (defn- init-bus [] (b/event-bus))
 
@@ -22,7 +22,19 @@
   (let [server (http/start-server handler {:port port})] server))
 
 (defn- stop-server [server]
-  (when server (.close server)))
+  (when server
+    (try
+      (.close server)
+      (catch Exception e
+        (log/warn "unable to close server. ignoring.")))))
+
+(defn- init-watchers []
+  (atom {}))
+
+(defn- teardown-watchers [watchers]
+  (when watchers
+    (doall
+      (map (fn [[k v]] (v)) @watchers))))
 
 (defn- start-nrepl-server [port]
   (let [server (nrepl/start-server :port port :bind "0.0.0.0")] server))
@@ -51,6 +63,7 @@
     (let [init (-> this
                    (assoc :changes (init-change-stream))
                    (assoc :bus (init-bus))
+                   (assoc :watchers (init-watchers))
                    (assoc :server (start-server #'net.reborg.fluorine/handler (c/fluorine-port)))
                    (assoc :nrepl-server (start-nrepl-server (c/nrepl-port)))
                    )]
@@ -59,10 +72,12 @@
       init))
   (stop [this]
     (stop-server (:server this))
+    (teardown-watchers (:watchers this))
     (close-change-stream (:changes this))
     (stop-nrepl-server (:nrepl-server this))
     (-> this
         (dissoc :server)
+        (dissoc :watchers)
         (dissoc :bus)
         (dissoc :changes)
         (dissoc :nrepl-server))))

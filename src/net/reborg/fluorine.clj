@@ -7,6 +7,8 @@
     [ring.middleware.params :as params]
     [compojure.route :as route]
     [aleph.http :as http]
+    [clojure-watch.core :refer [start-watch]]
+    [net.reborg.fluorine.config :as c]
     [manifold.stream :as s]
     [manifold.deferred :as d]
     [manifold.bus :as b]
@@ -25,6 +27,18 @@
   [conn path]
   (s/put! conn (serialize (fs/read path))))
 
+(defn- register-watcher [path from]
+  (let [watcher (start-watch [{:path (str (c/fluorine-root) path)
+                               :event-types [:create :modify :delete]
+                               :bootstrap (fn [path]
+                                            (log/warn (format "%s started watching %s" from path)))
+                               :callback (fn [event filename]
+                                           (do
+                                             (log/warn (format "file %s changed. firing watcher for %s" filename from))
+                                             @(s/put! (:changes system) {:channel path :msg (fs/read path)})))
+                               :options {:recursive true}}])]
+    (swap! (:watchers system) assoc path watcher)))
+
 (defn connection-handler
   [path req]
   (d/let-flow [conn (d/catch (http/websocket-connection req) (constantly nil))]
@@ -33,7 +47,8 @@
       (do
         (log/warn "reaction request from" (:remote-addr req) "for path" path)
         (push-config! conn path)
-        (s/connect (b/subscribe (:bus system) path) conn)))))
+        (s/connect (b/subscribe (:bus system) path) conn)
+        (register-watcher path (:remote-addr req))))))
 
 (def handler
   (params/wrap-params
