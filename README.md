@@ -61,6 +61,8 @@ and the following on the server:
 
     09:00:19.017 WARN net.reborg.fluorine - file /me/prj/my/fluorine/data/apps/clj-fe/someprop changed. firing watcher for 127.0.0.1
 
+The new config that was received from the client is the content of the file that was changed in edn format. By the time it arrives on the client it is already a proper Clojure data structure ready to use.
+
 ## todo
 
 * [ ] json format support
