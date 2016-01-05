@@ -70,9 +70,12 @@ The new config that was received from the client is the content of the file that
 ## todo
 
 * [ ] json format support
-* [ ] custom pluggable formats
-* [ ] tcp support
-* [ ] failover and reliability
-* [ ] stress testing
+* [ ] other custom pluggable formats
+* [ ] tcp
+* [ ] udp
+* [ ] client side config caching
+* [ ] client side reconnection logic (if server unavailable just use last received config)
+* [ ] server side clustering (for fail-over, the client could try to connect to another server if one goes down)
+* [ ] stress testing (how many connected clients? bandwidth? changes?)
 * [ ] homebrew tap for quick install on mac
-* [ ] how to create an ubuntu package?
+* [ ] apt-get ubuntu package?
