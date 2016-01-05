@@ -1,17 +1,21 @@
 ## Why Fluorine?
 
-Because configuration is extremely reactive: all applications form compounds with some config management library.
+Because configuration is extremely reactive: all applications form compounds with some config management library. Now seriously. Imagine the following recipe:
 
-Now seriously. Fluorine is distributed configuration the Clojure way:
+* You have some large number of nodes running your Clojure application. You've been careful putting things in a configuration files since the beginning including a great deal of feature toggles (http://martinfowler.com/bliki/FeatureToggle.html) so you can switch things on and off easily.
+* You've also components (at least around long-lasting connections) so you can easily ask a component to restart itself and read configuration again.
+* Your edn configuration files are sitting somewhere in a git repo, organized by folders corresponding to all the different apps.
 
-* edn as main configuration format (json also supported)
-* file based, so it can be easily put under source control
-* notifies all connected clients for changes to the configuration subset they are interested in (thanks to aleph, fluorine speaks WebSockets, tcp or udp).
-* provides an easy to use fluorine-client to talk to the server
+The fluorine-server will sit somewhere close to the git repo containing the configuration and will watch for changes to the files sitting there. The fluorine-client (optionally as a component) will be connected to the server and registered for changing events for some portion of the configuration tree. Now, everytime a pull to the git repo contains changes, running applications will be notified, bounce themselves and receives a brand new configuration. No need to restart services or worse, re-deploy apps.
 
-## Current status
+The main selling points of Fluorine are:
 
-Fluorine is in ready to use state but it has not been battle-tested nor stress-tested. So expect some developing, fixes and big changes in the next future.
+* EDN as main configuration format (json and custom formats will also supported soon)
+* File based, no proprietary formats or databases, so it can be easily put under source control
+* Clients listen for changes using WebSockets (TCP and UDP coming soon thanks to Aleph)
+* Smart caching, resiliency and failover strategies (again, coming soon)
+
+_Current status_: Fluorine is in ready to use state but it has not been battle-tested nor stress-tested. So expect some developing, fixes and big changes in the next future. The main areas to make it production ready are server failover/clustering and smarter clients (with caching and failover capabilities). The reason it's public already is in the hope somebody wants to help me out.
 
 ## How to install
 
@@ -66,7 +70,7 @@ The new config that was received from the client is the content of the file that
 ## todo
 
 * [ ] json format support
-* [ ] pluggable formats
+* [ ] custom pluggable formats
 * [ ] tcp support
 * [ ] failover and reliability
 * [ ] stress testing
