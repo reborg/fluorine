@@ -1,3 +1,5 @@
+![Fluorine Protons](https://dl.dropboxusercontent.com/u/1740372/fluorine.png)
+
 ## Why Fluorine?
 
 Because configuration is extremely reactive: all applications form compounds with some config management library. Now seriously, imagine the following recipe:
