@@ -1,0 +1,66 @@
+# different color scheme for the console
+export CLICOLOR=1
+export LSCOLORS=Gxfxcxdxbxegedabagacad
+
+# longer bash history please
+HISTFILESIZE=2500
+
+# useful alias
+alias p='cd -'
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+alias l='ls -lartG'
+alias ls='ls -G'
+alias s='cd ..'
+alias finder='open -a finder .'
+alias tailf='tail -f'
+alias yy='pwd | tr -d "\n" | pbcopy' # yield current dir to clipboard
+alias tomcat='cd /usr/local/Cellar/tomcat/7.0.42/libexec'
+alias top='top -o cpu -O +rsize -s 5 -n 20'
+alias e='vi'
+
+# LEININGEN
+alias lm='lein midje :filter -slow'
+alias lt='lein with-profile test test'
+alias lr='lein repl'
+alias lc='lein cucumber'
+la(){ lein cljsbuild auto $1; }
+alias la='lein cljsbuild auto'
+
+# GIT
+feature(){ git checkout -b feature-$1; }
+alias feature='git checkout -b feature-'
+alias gst='git status'
+alias gbr='git branch'
+alias gco='git checkout'
+gci(){ git commit -m $1; }
+alias gci='git commit -m'
+alias glog='git log --oneline --decorate --graph'
+alias gi='git-info.sh'
+alias gp='git pull --rebase'
+alias gdiff='git diff'
+
+### PROMPT STUFF
+export PROMPT_COMMAND='PS1="\[\033[0;33m\][\!]\`if [[ \$? = "0" ]]; then echo "\\[\\033[32m\\]"; else echo "\\[\\033[31m\\]"; fi\`[\u.\h: \`if [[ `pwd|wc -c|tr -d " "` > 18 ]]; then echo "\\W"; else echo "\\w"; fi\`]\$\[\033[0m\] "; echo -ne "\033]0;`hostname -s`:`pwd`\007"'
+
+# Dockerize
+alias dps='docker ps -a'
+dstop(){ docker stop $1; }
+alias dstop='docker stop'
+dstart(){ docker start $1; }
+alias dstart='docker start'
+dtail(){ docker logs -f $1; }
+alias dtail='docker logs -f'
+dexec(){ docker exec -i -t $1; }
+alias dexec='docker exec -i -t'
+drm(){ docker rm $1; }
+alias drm='docker rm'
+alias dimages='docker images'
+alias dcrm='docker-compose rm'
+alias dcstop='docker-compose stop'
+alias dcup='docker-compose up -d'
+alias dctail='docker-compose logs'
+alias dlogs='docker-compose logs'
+alias l='ls -lart'
+alias drmall="docker ps -a |  awk '{print \$1}' | xargs docker rm"

@@ -31,7 +31,7 @@
     <appender-ref ref="STDOUT" />
   </root>
 
-  <logger name="net.reborg" level="DEBUG" />
+  <logger name="net.reborg" level="INFO" />
   <logger name="org.eclipse" level="WARN" />
   <logger name="org.hornetq" level="WARN" />
   <!-- these namespsaces create a ton of log noise -->

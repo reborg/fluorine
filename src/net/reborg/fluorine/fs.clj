@@ -25,7 +25,7 @@
   [path]
   (let [f (io/file (str (fluorine-root) path))
         k (keywordize f)]
-    (log/info (.getPath f) "file?" (file? f) "content" (map str (.list f)))
+    (log/debug (.getPath f) "file?" (file? f) "content" (map str (.list f)))
     (if (file? f)
       {k (edn/read-string (slurp f))}
       (->> (.list f)
