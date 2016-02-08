@@ -1,0 +1,7 @@
+{
+  :fluorine-host "0.0.0.0"
+  :fluorine-port 10101
+  :nrepl-port 10102
+  :user-config "fluorine.config"
+  :fluorine-root "/home/moldev/fluorine-config"
+}
