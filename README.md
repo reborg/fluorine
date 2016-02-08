@@ -16,6 +16,11 @@ The main selling points of Fluorine are:
 * Multiple clients for different languages can listen for changes using WebSockets (only the Clojure client is ready now)
 * Smart caching, resiliency and failover strategies when the server is down and unable to deliver configuration changes
 
+How Fluorine compares to other tools?
+
+* Zookeeper: offers config-hosting (along with other big features like distributed synchronization). Config in Zookeeper is stored in some binary format that you are supposed to access with a client or via APIs. It's a very robust solution but you can't store configuration as plain text unless you build your tooling around it. Zookeeper also requires specific operational costs: you need to know how to configure a cluster and some of the concepts around it. Check the getting started guide to learn more. Fluorine is way more easier to operate and understand (being focused on one main task only). Fluorine doesn't use any proprietary format requirements and stores your configuration on the file system.
+* Etcd: also offers config-hosting. Is more user-friendly than Zookeeper and easier to operate. It still stores configuration in a proprietary format and requires you to use the APIs to change or access the configuration. https://github.com/bradgignac/slingshot is an attempt to create a tool based on the file system to synchronize changes with Etcd. But now you have to install two things instead of one. Fluorine offers similar capabilities in a single package.
+
 _Current status_: Fluorine is in ready to use state but it has not been battle-tested nor stress-tested. So expect some developing, fixes and big changes in the next future. The main areas to make it production ready are server failover/clustering and smarter clients (with caching and failover capabilities). The reason it's public already is in the hope somebody wants to help me out.
 
 ## How to install
