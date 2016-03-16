@@ -5,7 +5,7 @@
     </encoder>
 
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>logs/application-%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+      <fileNamePattern>fluorine-logs/fluorine-%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
       <timeBasedFileNamingAndTriggeringPolicy
           class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
         <maxFileSize>64 MB</maxFileSize>

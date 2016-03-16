@@ -6,15 +6,63 @@
     [clojure.edn :as edn]
     ))
 
+(defn parse-hosts
+  ([]
+   (parse-hosts "127.0.0.1" 10101))
+  ([hosts]
+   (parse-hosts hosts 10101))
+  ([hosts ports]
+   (let [hosts (clojure.string/split hosts #",")]
+     (map #(-> {:host % :port ports}) hosts))))
+
+(defn unchunk
+  "Need to unchunk lazy seqs preventing them to realize 32 items at a time.
+  That would be like connecting to all hosts in the list and only using the first.
+  Thanks http://stackoverflow.com/questions/3407876"
+  [s]
+  (when (seq s)
+    (lazy-seq
+      (cons (first s)
+            (unchunk (next s))))))
+
+(defn round-robin [f hosts port]
+  (->> (parse-hosts hosts port)
+       unchunk
+       (map #(try
+               (f (:host %) (:port %))
+               (catch Throwable t
+                 (log/warn "connection failed" (str (type t) " " (.getMessage t))))))
+       (drop-while nil?)
+       first))
+
+(defn- retry [f timeout & [sleeptime]]
+  (if-let [result (f)]
+    (do
+      (log/info "received configuration from remote fluorine.")
+      result)
+    (do
+      (log/info "couldn't get config from fluorine. Retrying until timeout.")
+      (Thread/sleep (or sleeptime 500))
+      (if (< (System/currentTimeMillis) timeout)
+        (recur f timeout sleeptime)
+        (throw (RuntimeException. "Timeout waiting for Fluorine server to respond."))))))
+
+(defn- connect [hosts port path & [timeout]]
+  "First attempt to connect roung robin to the given list of host.
+  First host to reply creates the connection. If all hosts fail
+  will wait and try again up to the requested timeout."
+  (retry
+    #(round-robin
+       (fn [host port]
+         (log/info "attempting to connect to" host port)
+         @(http/websocket-client (format "ws://%s:%s%s" host port path))) hosts port)
+    (or timeout (+ (System/currentTimeMillis) 3000))))
+
 (defn attach
   ([path callback]
    (attach path callback "localhost" 10101))
-  ([path callback host port]
-   (let [conn @(http/websocket-client
-                 (format "ws://%s:%s%s"
-                         host
-                         port
-                         path))]
+  ([path callback hosts port]
+   (let [conn (connect hosts port path)]
      (s/consume #(callback (edn/read-string %)) conn))))
 
 (defn detach
