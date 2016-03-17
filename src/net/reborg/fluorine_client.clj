@@ -4,7 +4,11 @@
     [aleph.http :as http]
     [manifold.stream :as s]
     [clojure.edn :as edn]
+    [clojure.main :refer [demunge]]
     ))
+
+(def ^{:doc "Main configuration"} cfg
+  (atom {}))
 
 (defn parse-hosts
   ([]
@@ -36,16 +40,14 @@
        first))
 
 (defn- retry [f timeout & [sleeptime]]
-  (if-let [result (f)]
+  (if-let [res (f)]
+    res
     (do
-      (log/info "received configuration from remote fluorine.")
-      result)
-    (do
-      (log/info "couldn't get config from fluorine. Retrying until timeout.")
+      (log/info (format "No results invoking %s yet. Retrying." (demunge (str f))))
       (Thread/sleep (or sleeptime 500))
       (if (< (System/currentTimeMillis) timeout)
         (recur f timeout sleeptime)
-        (throw (RuntimeException. "Timeout waiting for Fluorine server to respond."))))))
+        (throw (RuntimeException. (format "Timeout waiting for %s to return results." (demunge (str f)))))))))
 
 (defn- connect [hosts port path & [timeout]]
   "First attempt to connect roung robin to the given list of host.
@@ -59,11 +61,17 @@
     (or timeout (+ (System/currentTimeMillis) 3000))))
 
 (defn attach
-  ([path callback]
-   (attach path callback "localhost" 10101))
-  ([path callback hosts port]
+  "Attach will connect to the first available server and register
+  the callback function that updates the local atom.
+  It the waits until the callback is called
+  the first time to guarantee the configuration is ready to be used."
+  ([path]
+   (attach path "localhost" 10101))
+  ([path hosts port & kk]
    (let [conn (connect hosts port path)]
-     (s/consume #(callback (edn/read-string %)) conn))))
+     (s/consume #(reset! cfg (get-in (edn/read-string %) kk)) conn)
+     (retry #(seq (keys @cfg)) (+ (System/currentTimeMillis) 3000) 200)
+     conn)))
 
 (defn detach
   "Closes an open channel, presumably
