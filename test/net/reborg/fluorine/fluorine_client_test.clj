@@ -13,16 +13,17 @@
              (fc/parse-hosts "host1,host2") => [{:host "host1" :port 10101} {:host "host2" :port 10101}]
              (fc/parse-hosts "host1,host2" 20202) => [{:host "host1" :port 20202} {:host "host2" :port 20202}]))
 
-(facts "first connection"
-       (fact "should call only the first host in the list"
+(facts "first attach"
+       (fact "should always try to connect to all available servers"
              (let [acc (atom {})
                    res (fc/round-robin
                          (fn [host port]
                            (swap! acc assoc host port)) "a,b" 888)]
-               @acc => {"a" 888}))
-       (fact "when returning nil, it goes through all the list"
+               @acc => {"a" 888 "b" 888}))
+       (fact "throws when no server can return any result. Please always put something in your configs."
              (let [acc (atom {})
-                   res (fc/round-robin
-                         (fn [host port]
-                           (do (swap! acc assoc host port) nil)) "a,b,c" 888)]
+                   res (try (fc/round-robin
+                              (fn [host port]
+                                (do (swap! acc assoc host port) nil)) "a,b,c" 888 10)
+                            (catch RuntimeException rt "All good"))]
                @acc => {"a" 888 "b" 888 "c" 888})))
