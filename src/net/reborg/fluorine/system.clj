@@ -2,18 +2,16 @@
   (:gen-class)
   (:require [net.reborg.fluorine]
             [net.reborg.fluorine.bootstrap]
-            [manifold.stream :as s]
-            [manifold.bus :as b]
             [clojure.tools.nrepl.server :as nrepl]
             [net.reborg.fluorine.config :as c]
+            [net.reborg.fluorine.bus :as bus]
             [aleph.http :as http]
+            [manifold.stream :as s]
             [clojure.tools.logging :as log]
             [com.stuartsierra.component :as component]))
 
 (defn- init-change-stream [] (s/stream))
 (defn- close-change-stream [s] (when s (s/close! s)))
-
-(defn- init-bus [] (b/event-bus))
 
 (defn- stop-server [server]
   (when server (.close server)))
@@ -42,39 +40,25 @@
 (defn- stop-nrepl-server [server]
   (when server (nrepl/stop-server server)))
 
-(defn- serialize [x]
-  (with-out-str (clojure.pprint/write x)))
-
-(defn- dispatch-fn [bus]
-  (fn [event]
-    (b/publish! bus
-                (:channel event)
-                (serialize (:msg event)))))
-
-(defn- bootstrap-bus!
-  "The bus needs to be bootstrapped after the change
-  stream and the bus have been built."
-  [bus changes]
-  (s/consume (dispatch-fn bus) changes))
-
 (defrecord FluorineServer []
   component/Lifecycle
   (start [this]
     (let [init (-> this
                    (assoc :changes (init-change-stream))
-                   (assoc :bus (init-bus))
+                   (assoc :bus (bus/start))
                    (assoc :watchers (init-watchers))
                    (assoc :server (start-server #'net.reborg.fluorine/handler (c/fluorine-port)))
                    (assoc :nrepl-server (start-nrepl-server (c/nrepl-port)))
                    )]
       (log/info (format "started with %s" (c/debug)))
-      (bootstrap-bus! (:bus init) (:changes init))
+      (bus/bootstrap-bus! (:bus init) (:changes init))
       init))
   (stop [this]
     (stop-server (:server this))
     (teardown-watchers (:watchers this))
     (close-change-stream (:changes this))
     (stop-nrepl-server (:nrepl-server this))
+    (bus/stop (:bus this))
     (-> this
         (dissoc :server)
         (dissoc :watchers)

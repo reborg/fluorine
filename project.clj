@@ -1,4 +1,4 @@
-(defproject net.reborg/fluorine "0.0.2"
+(defproject net.reborg/fluorine "0.0.3-SNAPSHOT"
   :description "Distributed configuration for Clojure"
   :url "https://github.com/reborg/fluorine"
   :license {:name "Eclipse Public License - v 1.0"

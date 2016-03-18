@@ -9,9 +9,9 @@
     [aleph.http :as http]
     [clojure-watch.core :refer [start-watch]]
     [net.reborg.fluorine.config :as c]
+    [net.reborg.fluorine.bus :as bus]
     [manifold.stream :as s]
     [manifold.deferred :as d]
-    [manifold.bus :as b]
     ))
 
 (def non-websocket-request
@@ -27,7 +27,7 @@
   [conn path]
   (s/put! conn (serialize (fs/read path))))
 
-(defn- register-watcher [path from]
+(defn- register-watcher! [path from]
   (let [watcher (start-watch [{:path (str (c/fluorine-root) path)
                                :event-types [:create :modify :delete]
                                :bootstrap (fn [path]
@@ -40,15 +40,14 @@
     (swap! (:watchers system) assoc path watcher)))
 
 (defn connection-handler
-  [path req]
+  [path {:keys [remote-addr] :as req}]
   (d/let-flow [conn (d/catch (http/websocket-connection req) (constantly nil))]
-    (if-not conn
-      non-websocket-request
+    (if conn
       (do
-        (log/warn "reaction request from" (:remote-addr req) "for path" path)
+        (when (bus/subscribe! conn remote-addr path) (register-watcher! path remote-addr))
         (push-config! conn path)
-        (s/connect (b/subscribe (:bus system) path) conn)
-        (register-watcher path (:remote-addr req))))))
+        {:connected true})
+      non-websocket-request)))
 
 (def handler
   (params/wrap-params
