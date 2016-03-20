@@ -48,7 +48,7 @@
       init))
   (stop [this]
     (stop-server (:server this))
-    (watcher/stop (:watchers this))
+    (watcher/stop)
     (stop-changes (:changes this))
     (stop-nrepl-server (:nrepl-server this))
     (bus/stop (:bus this))

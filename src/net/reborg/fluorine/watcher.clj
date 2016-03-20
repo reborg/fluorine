@@ -8,29 +8,31 @@
     [manifold.stream :as s]
     ))
 
-(def watchers (atom {}))
+(def ^:private watchers (atom {}))
 
 (defn start []
   (reset! watchers {}))
 
-(defn stop [watchers]
+(defn stop
+  "Just invoke the watcher to stop." []
   (when watchers
-    (doall
-      (map (fn [[k v]] (v)) @watchers))))
+    (doseq [[k f-watch] @watchers] (f-watch))))
 
-(defn- log-watcher [from path]
-  (log/warn (format "%s started watching %s" from path)))
+(defn- log-watcher [ip path]
+  (log/warn (format "%s started watching %s" ip path)))
 
-(defn- send-event [from path event fname]
-  (log/warn (format "%s changed. Sending cfg to %s" fname [from path]))
+(defn- send-event [ip path event fname]
+  (log/warn (format "%s changed. Sending cfg to %s" fname [ip path]))
   @(s/put! (:changes system) {:channel path :msg (fs/read path)}))
 
-(defn register-watcher! [path from]
-  (let [watcher (start-watch
-                  [{:path (str (c/fluorine-root) path)
-                    :event-types [:create :modify :delete]
-                    :bootstrap (partial log-watcher from)
-                    :callback (partial send-event from path)
-                    :options {:recursive true}}])]
-    (swap! watchers assoc path watcher)))
-
+(defn register!
+  "Only create a new watcher if none exists already for [ip path] key."
+  [ip path]
+  (when-not (@watchers [ip path])
+    (swap! watchers assoc [ip path]
+           (start-watch
+             [{:path (str (c/fluorine-root) path)
+               :event-types [:create :modify :delete]
+               :bootstrap (partial log-watcher ip)
+               :callback (partial send-event ip path)
+               :options {:recursive true}}]))))

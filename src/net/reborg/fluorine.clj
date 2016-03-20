@@ -27,22 +27,23 @@
   [conn path]
   (s/put! conn (serialize (fs/read path))))
 
+(defn- register-client [conn ip path]
+  (bus/subscribe! conn ip path)
+  (watcher/register! ip path)
+  (push-config! conn path)
+  {:connected true})
+
 (defn connection-handler
   [path {:keys [remote-addr] :as req}]
   (d/let-flow [conn (d/catch (http/websocket-connection req) (constantly nil))]
     (if conn
-      (do
-        (when (bus/subscribe! conn remote-addr path)
-          (watcher/register-watcher! path remote-addr))
-        (push-config! conn path)
-        {:connected true})
+      (register-client conn remote-addr path)
       non-websocket-request)))
 
 (def handler
   (params/wrap-params
     (compojure/routes
-      (GET "*" {{path :*} :params}
-           (partial connection-handler path))
+      (GET "*" {{path :*} :params} (partial connection-handler path))
       (route/not-found "No such page."))))
 
 (defn- debug
