@@ -5,6 +5,7 @@
             [clojure.tools.nrepl.server :as nrepl]
             [net.reborg.fluorine.config :as c]
             [net.reborg.fluorine.bus :as bus]
+            [net.reborg.fluorine.watcher :as watcher]
             [aleph.http :as http]
             [manifold.stream :as s]
             [clojure.tools.logging :as log]
@@ -26,14 +27,6 @@
       (catch Exception e
         (log/warn "unable to close server. ignoring.")))))
 
-(defn- init-watchers []
-  (atom {}))
-
-(defn- teardown-watchers [watchers]
-  (when watchers
-    (doall
-      (map (fn [[k v]] (v)) @watchers))))
-
 (defn- start-nrepl-server [port]
   (let [server (nrepl/start-server :port port :bind "0.0.0.0")] server))
 
@@ -46,7 +39,7 @@
     (let [init (-> this
                    (assoc :changes (init-change-stream))
                    (assoc :bus (bus/start))
-                   (assoc :watchers (init-watchers))
+                   (assoc :watchers (watcher/init))
                    (assoc :server (start-server #'net.reborg.fluorine/handler (c/fluorine-port)))
                    (assoc :nrepl-server (start-nrepl-server (c/nrepl-port)))
                    )]
@@ -55,7 +48,7 @@
       init))
   (stop [this]
     (stop-server (:server this))
-    (teardown-watchers (:watchers this))
+    (watcher/teardown (:watchers this))
     (close-change-stream (:changes this))
     (stop-nrepl-server (:nrepl-server this))
     (bus/stop (:bus this))

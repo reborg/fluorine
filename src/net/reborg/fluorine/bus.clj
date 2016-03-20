@@ -39,7 +39,7 @@
   closed because if not messages will be duplicated.
   Returns true if this client was never seen before. False otherwise."
   [conn ip path]
-  (log/warn "reaction request from" ip "for path" path "current clients" (keys @clients))
+  (log/warn "reaction request" [ip path] ". Known clients:" (keys @clients))
   (let [bus (:bus boot/system)
         k [ip path]
         old-stream (@clients k)
