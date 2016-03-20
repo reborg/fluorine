@@ -4,7 +4,7 @@
 
 ## Why Fluorine?
 
-Because configuration is extremely "reactive": all applications form "compounds" with some config library. But Fluorine is a little more than just a library, it is a *client/server solution for distributed configuration*. Fluorine enables the following scenario:
+Because configuration is extremely "reactive": all applications form "compounds" with some config library. But Fluorine is more than just a library, it is a **client/server model for distributed configuration**. Fluorine enables the following scenario:
 
 * You have a Clojure system running on 2+ nodes. Nodes might be running the same application or different services, hosted in-house or some cloud service.
 * Applications are stored in separate git repos (svn, hg, or anything else), so you can develop and deploy them independently.
@@ -32,13 +32,12 @@ The main selling point of Fluorine is to suggest a complete configuration model,
 
 *server*
 
-At the moment installation is straight from sources. A more formal approach will follow (brew/apt-get):
+Check the current version at the top of the page if the one below is not the same.
 
 ```bash
-git clone https://github.com/reborg/fluorine
-lein uberjar
+curl -O https://github.com/reborg/fluorine/releases/download/0.0.3/fluorine.jar
 echo '{:fluorine-root "/path/to/data/folder"}' > fluorine.config
-java -jar target/fluorine.jar
+java -jar fluorine.jar
 ```
 
 Notice that `:fluorine-root` should point to the folder that Fluorine should watch for serving/changing configuration files.
