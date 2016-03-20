@@ -11,8 +11,8 @@
             [clojure.tools.logging :as log]
             [com.stuartsierra.component :as component]))
 
-(defn- init-change-stream [] (s/stream))
-(defn- close-change-stream [s] (when s (s/close! s)))
+(defn- start-changes [] (s/stream))
+(defn- stop-changes [s] (when s (s/close! s)))
 
 (defn- stop-server [server]
   (when server (.close server)))
@@ -37,19 +37,19 @@
   component/Lifecycle
   (start [this]
     (let [init (-> this
-                   (assoc :changes (init-change-stream))
+                   (assoc :changes (start-changes))
                    (assoc :bus (bus/start))
-                   (assoc :watchers (watcher/init))
+                   (assoc :watchers (watcher/start))
                    (assoc :server (start-server #'net.reborg.fluorine/handler (c/fluorine-port)))
                    (assoc :nrepl-server (start-nrepl-server (c/nrepl-port)))
                    )]
       (log/info (format "started with %s" (c/debug)))
-      (bus/bootstrap-bus! (:bus init) (:changes init))
+      (bus/init! (:bus init) (:changes init))
       init))
   (stop [this]
     (stop-server (:server this))
-    (watcher/teardown (:watchers this))
-    (close-change-stream (:changes this))
+    (watcher/stop (:watchers this))
+    (stop-changes (:changes this))
     (stop-nrepl-server (:nrepl-server this))
     (bus/stop (:bus this))
     (-> this

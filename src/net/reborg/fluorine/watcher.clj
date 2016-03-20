@@ -10,10 +10,10 @@
 
 (def watchers (atom {}))
 
-(defn init []
+(defn start []
   (reset! watchers {}))
 
-(defn teardown [watchers]
+(defn stop [watchers]
   (when watchers
     (doall
       (map (fn [[k v]] (v)) @watchers))))

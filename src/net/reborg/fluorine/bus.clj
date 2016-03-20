@@ -28,7 +28,7 @@
                 (:channel event)
                 (serialize (:msg event)))))
 
-(defn bootstrap-bus!
+(defn init!
   "The bus needs to be bootstrapped after the change
   stream and the bus have been built."
   [bus changes]
