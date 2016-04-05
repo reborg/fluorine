@@ -66,8 +66,8 @@
 (defn attach
   "Attach will connect to the first available server and register
   the callback function that updates the local atom.
-  It the waits until the callback is called
-  the first time to guarantee the configuration is ready to be used."
+  It then waits until the callback is called
+  the first time, to guarantee the configuration is ready to be used."
   ([path]
    (attach path "localhost" 10101))
   ([path hosts port & kk]
