@@ -18,7 +18,8 @@
   client cache."
   [bus]
   (when bus
-    (doseq [s (b/topic->subscribers bus)] (s/close! s))
+    (doseq [s (first (vals (b/topic->subscribers bus)))]
+      (s/close! s))
     (reset! clients {})))
 
 (defn- dispatch-fn [bus]

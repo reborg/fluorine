@@ -29,6 +29,8 @@
 
 (defn- register-client [conn ip path]
   (bus/subscribe! conn ip path)
+  (s/consume #(log/info (format "%s %s" % ip)) conn)
+  (s/on-closed conn #(log/warn (format "closed connection from %s" ip)))
   (watcher/register! ip path)
   (push-config! conn path)
   {:connected true})
