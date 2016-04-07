@@ -4,24 +4,24 @@
 
 ## Why Fluorine?
 
-Because configuration is extremely "reactive": all applications form "compounds" with some config library. But Fluorine is more than just a library, it is a **client/server model for distributed configuration**. Fluorine enables the following scenario:
+Because configuration is extremely "reactive": all applications form "compounds" with some config library. But Fluorine is more than just a library, it is a **client/server model for distributed configuration**. Fluorine enables and supports the following scenario:
 
 * You have a Clojure system running on 2+ nodes. Nodes might be running the same application or different services, hosted in-house or some cloud service.
 * Applications are stored in separate git repos (svn, hg, or anything else), so you can develop and deploy them independently.
 * Configurable parts of the applications are stored on plain edn files, including startup configuration (stuff needed while bootstrapping like ports, locations, etc) or runtime configuration (for example feature toggles).
-* But configuration is stored in another, centralized, repository. All services edn files will live under the same root folder, that you can structure with any sub-level of subfolders/files.
+* Plain text configuration for all applications is stored in a separated, centralized, repository. All services edn files will live under the same root folder, that you can structure with any sub-level of subfolders/files.
 * When services start, they connect to Fluorine server to receive their configuration and bootstrap data.
-* Whenever a configuration file is changed in the centralized repository, the running applications interested in the file will receive the updated configuration.
+* Whenever a configuration file is changed in the centralized repository, the running applications interested in the file will receive the updated configuration. No restart/redeploy whatsoever.
 
-Fluorine-server will sit somewhere with a local pull of the configuration repository and watch for changes. Fluorine-client (at the moment Clojure only) will connect to the server and register for change events for some portion of the configuration tree.
+Fluorine-server will sit somewhere with a local pull of the configuration repository and watch for changes. Fluorine-client (at the moment Clojure only) will connect to the server and register for change events for some portion of the configuration tree. The client is smart enough to fail-over to other fluorine-servers in case of malfunctioning.
 
 ### What Fluorine offers?
 
-The main selling point of Fluorine is to suggest a complete configuration model, not just a library to read properties. Other important facts include:
+The main selling point of Fluorine is to push toward a complete configuration solution, not just a library to read properties from. Other important driving principles include:
 
 * Plain text instead of proprietary serialization formats (only edn now, but json and custom formats planned). Plain text is readable and can be easily put under source control, where changes can be tracked easily and "diffing" is well supported by tools.
 * Client/Server communication via web-sockets is firewall friendly and cross-language enabling other languages than Clojure to use Flurine (as soon as other clients are ready).
-* Resiliency and fail-over capabilities: you can run many Fluorine Server instances and clients know how to fail-over gracefully. Even if all Fluorine servers are unavailable, a local cache will keep your system running.
+* Resiliency and fail-over capabilities: you can run many Fluorine Server instances and clients know how to fail-over gracefully. Even if all Fluorine servers are unavailable, the local cache in the client will keep your system running. Ping messages are sent over between client and servers to prevent firewall to close inactive connections.
 
 ### How Fluorine compares to other solutions?
 
@@ -85,9 +85,13 @@ Which shows an array with 3 elements: the old value, the new value that changed,
 
 The new config that was received from the client is the content of the file that was changed in edn format. By the time it arrives on the client it is already a proper Clojure data structure ready to use.
 
-## Running with multiple Fluorine Servers
+## High availability: running with multiple Fluorine Servers
 
-Apart from using a comma separated list of all the servers you want to connect from the client, the only other thing to take in mind is that now all Fluorine Servers will compete against all clients to push a new configuration. So if you run with multiple Fluorine Servers you should always make sure that changes to the configuration repository are always synchronized and executed simultaneously (or in a very close sequence). The principle is that the last Fluorine Server to realize there is a change to push will overwrite all the others on all client (which is not a problem).
+All you need to know is that you can start the fluorine-client with a comma separated list of fluorine servers. As of the details, if you are curious, read below.
+
+All Fluorine Servers are connected by the client at startup and will compete against the local cache to push a new configuration. So if you run with multiple Fluorine Servers you should always make sure that changes to the configuration repository are kept in sync and executed roughly at the same time (or in a very close sequence). The last Fluorine Server to pick up a local change will write (possibly over) the local client cache.
+
+Ping messages are sent by the client to all the connected servers at regoular intervals. This prevents firewalls (or other networking infrastructures) to close the connection in case there is no traffic through it for a long time. In case one side or the other disconnects, the server will proceed to clean up internal state for the lost client. The worst that can happen is that all the connections get closed and the client won't be able to receive any further update, but it will run happily on the local cache.
 
 ## todo
 
