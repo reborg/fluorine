@@ -2,7 +2,7 @@
 
 [![Clojars Project](https://img.shields.io/clojars/v/net.reborg/fluorine.svg)](https://clojars.org/net.reborg/fluorine)
 
-## Why Fluorine?
+## Fluorine model for distributed configuration
 
 Because configuration is extremely "reactive": all applications form "compounds" with some config library. But Fluorine is more than just a library, it is a **client/server model for distributed configuration**. Fluorine enables and supports the following scenario:
 
@@ -13,9 +13,11 @@ Because configuration is extremely "reactive": all applications form "compounds"
 * When services start, they connect to Fluorine server to receive their configuration and bootstrap data.
 * Whenever a configuration file is changed in the centralized repository, the running applications interested in the file will receive the updated configuration. No restart/redeploy whatsoever.
 
-Fluorine-server will sit somewhere with a local pull of the configuration repository and watch for changes. Fluorine-client (at the moment Clojure only) will connect to the server and register for change events for some portion of the configuration tree. The client is smart enough to fail-over to other fluorine-servers in case of malfunctioning.
+Or as a glorious full-color digram:
 
-### What Fluorine offers?
+![Fluorine Diagram](https://github.com/reborg/fluorine/blob/master/docs/diagram.jpeg)
+
+### Driving principles
 
 The main selling point of Fluorine is to push toward a complete configuration solution, not just a library to read properties from. Other important driving principles include:
 
