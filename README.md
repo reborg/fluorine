@@ -37,7 +37,7 @@ The main selling point of Fluorine is to push toward a complete configuration so
 Check the current version at the top of the page if the one below is not the same.
 
 ```bash
-curl -O https://github.com/reborg/fluorine/releases/download/0.0.4/fluorine.jar
+curl -O https://github.com/reborg/fluorine/releases/download/0.0.5/fluorine.jar
 echo '{:fluorine-root "/path/to/data/folder"}' > fluorine.config
 java -jar fluorine.jar
 ```
@@ -49,7 +49,7 @@ Notice that `:fluorine-root` should point to the folder that Fluorine should wat
 Check the current version at the top of the page if the one below is not the same. Probably better to use the most recent.
 
 ```clojure
-:dependencies [[net.reborg/fluorine "0.0.4"]]
+:dependencies [[net.reborg/fluorine "0.0.5"]]
 ```
 
 ## How to use
