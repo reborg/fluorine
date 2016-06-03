@@ -6,12 +6,14 @@
 
 Because configuration is extremely "reactive": all applications form "compounds" with some config library. But Fluorine is more than just a library, it is a **client/server model for distributed configuration**. Fluorine enables and supports the following scenario:
 
-* You have a Clojure system running on 2+ nodes. Nodes might be running the same application or different services, hosted in-house or some cloud service.
-* Applications are stored in separate git repos (svn, hg, or anything else), so you can develop and deploy them independently.
-* Configurable parts of the applications are stored on plain edn files, including startup configuration (stuff needed while bootstrapping like ports, locations, etc) or runtime configuration (for example feature toggles).
-* Plain text configuration for all applications is stored in a separated, centralized, repository. All services edn files will live under the same root folder, that you can structure with any sub-level of subfolders/files.
-* When services start, they connect to Fluorine server to receive their configuration and bootstrap data.
-* Whenever a configuration file is changed in the centralized repository, the running applications interested in the file will receive the updated configuration. No restart/redeploy whatsoever.
+* You have a system running on 2+ nodes in-house or some cloud service. Nodes might be running the same app or different services.
+* Different apps are stored in separate git repos (svn, hg, or anything else), so you can develop and deploy them independently.
+* The configurable part of the application is stored as plain text [edn,json,custom-format] files. Configuration is both startup (stuff for initial bootstrapping like ports, paths, etc) or runtime (for example feature toggles).
+* Plain text config is stored in a centralized file-system repository that you can structure with any sub-level of subfolders/files.
+* When a service start it connects to Fluorine to register insterest in a specific configuration sub-path.
+* At the beginning or whenever the config sub-path changes in the central repo, the running apps interested in it will receive updates. 
+* No restart/redeploy/nohup should ever be necessary.
+* No impacts on running applications if central repo server goes down.
 
 Or as a glorious full-color digram:
 
