@@ -99,6 +99,9 @@ Ping messages are sent by the client to all the connected servers at regoular in
 
 ## todo
 
+* [ ] investigate long polling over HTTP avoiding websocket upgrade requests for those firewall doing full packet inspections.
+* [ ] consider secondary file cache on the client so application can restart even without fluorine servers available
+* [ ] consider REST endpoint to get the configuration for any other kind of app needing that
 * [ ] json format support
 * [ ] other custom pluggable formats
 * [ ] JavaScript client
