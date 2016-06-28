@@ -1,4 +1,3 @@
-/target
 /lib
 /classes
 pom.xml
@@ -13,3 +12,7 @@ data
 fluorine.config
 fluorine-logs
 docs/diagram.key
+
+target/*
+# But not these files...
+!target/fluorine.jar
