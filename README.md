@@ -11,7 +11,7 @@ Because configuration is extremely "reactive": all applications form "compounds"
 * The configurable part of the application is stored as plain text [edn,json,custom-format] files. Configuration is both startup (stuff for initial bootstrapping like ports, paths, etc) or runtime (for example feature toggles).
 * Plain text config is stored in a centralized file-system repository that you can structure with any sub-level of subfolders/files.
 * When a service start it connects to Fluorine to register insterest in a specific configuration sub-path.
-* At the beginning or whenever the config sub-path changes in the central repo, the running apps interested in it will receive updates. 
+* At the beginning or whenever the config sub-path changes in the central repo, the running apps interested in it will receive updates.
 * No restart/redeploy/nohup should ever be necessary.
 * No impacts on running applications if central repo server goes down.
 
@@ -39,12 +39,12 @@ The main selling point of Fluorine is to push toward a complete configuration so
 Check the current version at the top of the page if the one below is not the same.
 
 ```bash
-curl -O https://github.com/reborg/fluorine/releases/download/0.0.5/fluorine.jar
+curl -O -L https://github.com/reborg/fluorine/releases/download/0.0.7/fluorine.jar
 echo '{:fluorine-root "/path/to/data/folder"}' > fluorine.config
 java -jar fluorine.jar
 ```
 
-Notice that `:fluorine-root` should point to the folder that Fluorine should watch for serving/changing configuration files.
+Notice that `:fluorine-root` should point to the folder that Fluorine should watch for serving/changing configuration files, so you want to replace `/path/to/data/folder/` with the root for all the configuration files.
 
 *client*
 
