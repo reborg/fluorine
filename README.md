@@ -1,4 +1,4 @@
-https://travis-ci.org/reborg/fluorine.svg?branch=master
+![](https://travis-ci.org/reborg/fluorine.svg?branch=master)
 
 ![Fluorine Protons](https://dl.dropboxusercontent.com/u/1740372/fluorine.png)
 
