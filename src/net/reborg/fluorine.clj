@@ -10,6 +10,7 @@
     [net.reborg.fluorine.config :as c]
     [net.reborg.fluorine.bus :as bus]
     [net.reborg.fluorine.watcher :as watcher]
+    [net.reborg.fluorine.data :as data]
     [manifold.stream :as s]
     [manifold.deferred :as d]
     ))
@@ -19,13 +20,10 @@
    :headers {"content-type" "application/text"}
    :body "Expected a websocket request."})
 
-(defn- serialize [x]
-  (with-out-str (clojure.pprint/write x)))
-
 (defn- push-config!
   "Send current config reading down a connected client."
   [conn path]
-  (s/put! conn (serialize (fs/read path))))
+  (s/put! conn (data/marshall (fs/read path))))
 
 (defn- register-client [conn ip path]
   (bus/subscribe! conn ip path)
@@ -51,4 +49,4 @@
 (defn- debug
   "Just here for a one off send of a sample config down connected clients."
   []
-  @(s/put! (:changes system) {:channel "apps/clj-fe" :msg {:a "hello"}}))
+  @(s/put! (:changes system) {:channel "apps/clj-fe" :msg (data/marshall (vary-meta {:a "hello"} assoc :format :edn))}))

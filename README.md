@@ -23,7 +23,7 @@ Or as a glorious full-color digram:
 
 The main selling point of Fluorine is to push toward a complete configuration solution, not just a library to read properties from. Other important driving principles include:
 
-* Plain text instead of proprietary serialization formats (only edn now, but json and custom formats planned). Plain text is readable and can be easily put under source control, where changes can be tracked easily and "diffing" is well supported by tools.
+* Plain text instead of proprietary serialization formats (edn and json are supported at the moment). Plain text is readable and can be easily put under source control, where changes can be tracked easily and "diffing" is well supported by tools.
 * Client/Server communication via web-sockets is firewall friendly and cross-language enabling other languages than Clojure to use Flurine (as soon as other clients are ready).
 * Resiliency and fail-over capabilities: you can run many Fluorine Server instances and clients know how to fail-over gracefully. Even if all Fluorine servers are unavailable, the local cache in the client will keep your system running. Ping messages are sent over between client and servers to prevent firewall to close inactive connections.
 
@@ -39,7 +39,7 @@ The main selling point of Fluorine is to push toward a complete configuration so
 Check the current version at the top of the page if the one below is not the same.
 
 ```bash
-curl -O -L https://github.com/reborg/fluorine/releases/download/0.0.7/fluorine.jar
+curl -O -L https://github.com/reborg/fluorine/releases/download/0.0.8/fluorine.jar
 echo '{:fluorine-root "/path/to/data/folder"}' > fluorine.config
 java -jar fluorine.jar
 ```
@@ -51,7 +51,7 @@ Notice that `:fluorine-root` should point to the folder that Fluorine should wat
 Check the current version at the top of the page if the one below is not the same. Probably better to use the most recent.
 
 ```clojure
-:dependencies [[net.reborg/fluorine "0.0.5"]]
+:dependencies [[net.reborg/fluorine "0.0.8"]]
 ```
 
 ## How to use
@@ -102,7 +102,7 @@ Ping messages are sent by the client to all the connected servers at regoular in
 * [ ] investigate long polling over HTTP avoiding websocket upgrade requests for those firewall doing full packet inspections.
 * [ ] consider secondary file cache on the client so application can restart even without fluorine servers available
 * [ ] consider REST endpoint to get the configuration for any other kind of app needing that
-* [ ] json format support
+* [x] json format support
 * [ ] other custom pluggable formats
 * [ ] JavaScript client
 * [ ] tcp, udp?

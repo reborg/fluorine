@@ -5,6 +5,7 @@
     [clojure.tools.logging :as log]
     [clojure-watch.core :refer [start-watch]]
     [net.reborg.fluorine.config :as c]
+    [net.reborg.fluorine.data :as data]
     [manifold.stream :as s]
     ))
 
@@ -23,7 +24,7 @@
 
 (defn- send-event [ip path event fname]
   (log/warn (format "%s changed. Sending cfg to %s" fname [ip path]))
-  @(s/put! (:changes system) {:channel path :msg (fs/read path)}))
+  @(s/put! (:changes system) {:channel path :msg (data/marshall (fs/read path))}))
 
 (defn register!
   "Only create a new watcher if none exists already for [ip path] key."

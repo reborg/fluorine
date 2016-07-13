@@ -1,4 +1,4 @@
-(defproject net.reborg/fluorine "0.0.5"
+(defproject net.reborg/fluorine "0.0.8"
   :description "Distributed configuration for Clojure"
   :url "https://github.com/reborg/fluorine"
   :license {:name "Eclipse Public License - v 1.0"
@@ -28,6 +28,7 @@
 
                  ;; other
                  [clojure-watch "0.1.11"]
+                 [cheshire "5.2.0"]
                  ]
   :uberjar-name "fluorine.jar"
   :repl-options {:init-ns user

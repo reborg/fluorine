@@ -7,6 +7,7 @@
     [clojure.edn :as edn]
     [clojure.data :refer [diff]]
     [clojure.main :refer [demunge]]
+    [net.reborg.fluorine.data :as data]
     ))
 
 (def ^{:doc "Main configuration"} cfg
@@ -60,13 +61,13 @@
     (s/on-closed conn #(log/warn (format "Lost 1 of %s connections." (count conns))))
     (s/consume
       (fn [new-cfg]
-        (let [new-cfg (get-in (edn/read-string new-cfg) kk)]
+        (let [new-cfg (get-in (data/unmarshall new-cfg) kk)]
           (log/info "Received new config" (diff @cfg new-cfg))
           (reset! cfg new-cfg)))
       conn)))
 
 (defn keep-alive
-  "Create a separate thread to ends a ping message every X secs to prevent
+  "Create a separate thread to send a ping message every X secs to prevent
   firewalls to close the connections. The future is the actual thread holder.
   The delay is there to prevent the thread to start right away."
   [conns]
