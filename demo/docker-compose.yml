@@ -1,0 +1,91 @@
+fluorine1:
+  image: reborg/fluorine
+  ports:
+    - 10101:10101
+  volumes:
+    - ./fluorinedemo/:/data/
+
+fluorine2:
+  image: reborg/fluorine
+  ports:
+    - 10102:10101
+  volumes:
+    - ./fluorinedemo/:/data/
+
+fluorine3:
+  image: reborg/fluorine
+  ports:
+    - 10103:10101
+  volumes:
+    - ./fluorinedemo/:/data/
+
+fluorine4:
+  image: reborg/fluorine
+  ports:
+    - 10104:10101
+  volumes:
+    - ./fluorinedemo/:/data/
+
+client1:
+  image: reborg/fluorine-client
+  links:
+    - fluorine1
+    - fluorine2
+    - fluorine3
+    - fluorine4
+
+client2:
+  image: reborg/fluorine-client
+  links:
+    - fluorine1
+    - fluorine2
+    - fluorine3
+    - fluorine4
+
+client3:
+  image: reborg/fluorine-client
+  links:
+    - fluorine1
+    - fluorine2
+    - fluorine3
+    - fluorine4
+
+client4:
+  image: reborg/fluorine-client
+  links:
+    - fluorine1
+    - fluorine2
+    - fluorine3
+    - fluorine4
+
+client5:
+  image: reborg/fluorine-client
+  links:
+    - fluorine1
+    - fluorine2
+    - fluorine3
+    - fluorine4
+
+client6:
+  image: reborg/fluorine-client
+  links:
+    - fluorine1
+    - fluorine2
+    - fluorine3
+    - fluorine4
+
+client7:
+  image: reborg/fluorine-client
+  links:
+    - fluorine1
+    - fluorine2
+    - fluorine3
+    - fluorine4
+
+client8:
+  image: reborg/fluorine-client
+  links:
+    - fluorine1
+    - fluorine2
+    - fluorine3
+    - fluorine4

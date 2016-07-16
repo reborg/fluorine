@@ -1,0 +1,5 @@
+(get-in {:a "a" :b {:c "c"}} [])
+(get-in {:a "a" :b {:c "c"}})
+(get-in {:a "a" :b {:c "c"}} )
+(get-in {:a "a" :b {:c "c"}} nil)
+exit

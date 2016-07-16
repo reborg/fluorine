@@ -16,3 +16,5 @@ docs/diagram.key
 target/*
 # But not these files...
 !target/fluorine.jar
+demo/fluorinedemo/apps/clj-blackbox
+demo/fluorinedemo/apps/fbi-agent
