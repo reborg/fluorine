@@ -62,7 +62,7 @@
     (s/consume
       (fn [new-cfg]
         (let [new-cfg (get-in (data/unmarshall new-cfg) kk)]
-          (log/info "Received new config" (diff @cfg new-cfg))
+          (let [d (diff @cfg new-cfg)] (log/info "Received new config. Diff:" (second d)))
           (reset! cfg new-cfg)))
       conn)))
 

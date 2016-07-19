@@ -8,9 +8,6 @@
 
 (def ^:private clients (atom {}))
 
-(defn- serialize [x]
-  (with-out-str (clojure.pprint/write x)))
-
 (defn start [] (b/event-bus))
 
 (defn stop
@@ -26,7 +23,7 @@
   (fn [event]
     (b/publish! bus
                 (:channel event)
-                (serialize (:msg event)))))
+                (:msg event))))
 
 (defn init!
   "The bus needs to be bootstrapped after the change
