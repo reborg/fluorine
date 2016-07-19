@@ -104,10 +104,10 @@ Ping messages are sent by the client to all the connected servers at regoular in
 * [ ] investigate long polling over HTTP avoiding websocket upgrade requests for those firewall doing full packet inspections.
 * [ ] consider secondary file cache on the client so application can restart even without fluorine servers available
 * [ ] consider REST endpoint to get the configuration for any other kind of app needing that
-* [x] json format support
-* [ ] other custom pluggable formats
+* [ ] other custom pluggable formats?
 * [ ] JavaScript client
-* [ ] tcp, udp?
-* [ ] stress testing (how many connected clients? bandwidth? changes?)
-* [ ] homebrew tap for quick install on mac
+* [ ] enabling tcp, udp options, testing.
 * [ ] apt-get ubuntu package?
+* [ ] stress testing (how many connected clients? bandwidth? changes?)
+* [x] json format support
+* [x] homebrew tap for quick install on mac
